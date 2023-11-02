@@ -1068,6 +1068,36 @@ def mine_numba(block_height, mining_block_data,merkle_root,nonce_array,debug_lev
         print("Exausted all values of nonce!")  
     return -1
 
+
+def check_hash(h1):
+    if  h1.startswith('0000000000000000000'):
+        print(CGREEN + f'GREEN hash:   {h1}' + CEND)
+
+    elif h1 < '000000000000F000F0055f5b0000000000000000000000000000000000000000':    
+        print(CREDBG + f'REDBG hash:   {h1}' + CEND)
+
+    elif h1 < '00000000000F0000F0055f5b0000000000000000000000000000000000000000':    
+        print(CRED + f'RED1 hash:   {h1}' + CEND)
+
+    elif h1 < '0000000000F0000000055f5b0000000000000000000000000000000000000000':
+        print(CYELLOWBG + f'YELLOWBG hash:   {h1}' + CEND)
+
+    elif h1 < '000000000F00000100055f5b0000000000000000000000000000000000000000':
+        print(CYELLOW2 + f'YELLOW2 hash:   {h1}' + CEND)
+       
+    elif h1 < '00000000F000000100055f5b0000000000000000000000000000000000000000':
+        print(CBLUEBG + f'BLUEBG hash:   {h1}' + CEND)
+
+    elif h1 < '0000000F0001000100055f5b0000000000000000000000000000000000000000':
+        print(CBLUE + f'BLUE1 hash:   {h1}' + CEND)
+
+    elif h1 < '000000F000001000100055f5b0000000000000000000000000000000000000000':
+        print(CVIOLETBG + f'VIOLETBG hash:   {h1}' + CEND)
+
+    elif h1 < '00000F000001000100055f5b0000000000000000000000000000000000000000':
+        print(CVIOLET + f'VIOLET1 hash:   {h1}' + CEND) 
+
+
 def main():
     potential_nonce = -1
     nonce_array = copy_to_memory()
@@ -1080,6 +1110,7 @@ def main():
         #Get mining template
         try:
             mining_block_info = get_block_info(btcNode_ip, btcNode_port,btcNode_user,btcNode_pass)
+            print(f'mining_block_info: {mining_block_info}')
         except:
             continue        
 
@@ -1112,6 +1143,8 @@ def main():
     correct_nonce = potential_nonce
     #if lucky generate a block and submit it to the network
     block= gen_block(version,previous_hash,merkle_root,t,bits,correct_nonce, tansaction_data_list)
+    check_hash(block)
+    
     submit_work(block)
 
 if __name__ == '__main__':    
