@@ -7,6 +7,7 @@ import requests, json
 from numba import njit, int64, cuda 
 import numpy as np
 import math
+import socket
 
 ############### CUDA Functions #######################
 @cuda.jit(device=True)
@@ -1099,6 +1100,14 @@ def check_hash(h1):
 
 
 def main():
+    address = 'bc1q8khnww6mex3vngf55h043eff4hecluky0y6j5c'
+
+    host    = 'solo.ckpool.org'
+    port    = 3333
+
+    print(f'address: {address}')
+    print("host:{} port:{}".format(host,port))
+
     potential_nonce = -1
     nonce_array = copy_to_memory()
     btcNode_ip, btcNode_port,btcNode_user,btcNode_pass,btc_public_address,miner_id,debug_level = read_cfg()
@@ -1109,11 +1118,16 @@ def main():
             startTime = time.time()        
         #Get mining template
         try:
-            mining_block_info = get_block_info(btcNode_ip, btcNode_port,btcNode_user,btcNode_pass)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((host,port))
+            mining_block_info = get_work(sock)
+            #mining_block_info = get_block_info(btcNode_ip, btcNode_port,btcNode_user,btcNode_pass)
             print(f'mining_block_info: {mining_block_info}')
         except:
             continue        
 
+        print('here in mining...')
+        sys.exit()
         #generate coinbase transaction and get raw transaction and transaction hash (id)
         coinbase_transaction_txid, coinbase_transaction = gen_coinbase_transaction(mining_block_info['coinbasevalue'],mining_block_info['height'],btc_public_address,miner_id)             
         #add the coinbase transaction id and transactions from the mining templete to a list 
@@ -1144,7 +1158,7 @@ def main():
     #if lucky generate a block and submit it to the network
     block= gen_block(version,previous_hash,merkle_root,t,bits,correct_nonce, tansaction_data_list)
     check_hash(block)
-    
+
     submit_work(block)
 
 if __name__ == '__main__':    
