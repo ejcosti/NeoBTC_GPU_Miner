@@ -1112,7 +1112,7 @@ def main():
     nonce_array = copy_to_memory()
     btcNode_ip, btcNode_port,btcNode_user,btcNode_pass,btc_public_address,miner_id,debug_level = read_cfg()
     if debug_level <=3:
-        print("Mining Starts Now!")
+        print("Branch:  mod1 - Mining Starts Now!")
     while potential_nonce < 0:
         if debug_level <=2:
             startTime = time.time()        
